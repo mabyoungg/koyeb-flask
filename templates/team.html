@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet" />
+
+    <title>Introduce</title>
+
+    <style>
+        * {
+            font-family: "Noto Serif KR", serif;
+        }
+
+        .typing_text {
+            height: 170px;
+        }
+
+        .typing_text::after {
+            content: "|";
+            animation: blink 1s step-end infinite;
+            color: #fff;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            49% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .profile {
+            font-size: 50px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mypost {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto 20px auto;
+
+            box-shadow: 0px 0px 3px 0px black;
+            padding: 20px;
+        }
+
+        .mypost>button {
+            margin-top: 15px;
+        }
+
+        .mycards {
+            width: 95%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .mycards>.card {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        .card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profiles {
+            margin: 20px auto 0px auto;
+            width: 95%;
+            max-width: 1200px;
+        }
+    </style>
+
+
+    <script>
+        $(document).ready(function () {
+            set_temp();
+            show_comment();
+            listing();
+        });
+
+        function set_temp() {
+            fetch("http://spartacodingclub.shop/sparta_api/weather/seoul").then((res) => res.json()).then((data) => {
+                let temp = data['temp']
+                $('#temp').text(temp)
+            });
+        }
+
+        function noSpaceForm(obj) {
+            var str_space = /\s/;  // 공백체크
+            if (str_space.exec(obj.value)) { //공백 체크
+                alert("해당 항목에는 공백을 사용할수 없습니다.\n공백은 자동적으로 제거 됩니다.");
+                obj.focus();
+                obj.value = obj.value.replace(' ', ''); // 공백제거
+                return false;
+            }
+        }
+
+        function set_temp() {
+            fetch("http://spartacodingclub.shop/sparta_api/weather/seoul").then((res) => res.json()).then((data) => {
+                let temp = data['temp']
+                $('#temp').text(temp)
+            });
+        }
+
+
+
+
+
+        function listing() {
+            fetch('/data').then((res) => res.json()).then((data) => {
+                console.log(data)
+                let rows = data['result']
+                $('#cards-box').empty()
+
+                rows.forEach((a) => {
+                    let name = a['name']
+                    let mbti = a['mbti']
+                    let major = a['major']
+                    let url = a['url']
+                    let num = a['num']
+                    let content = a['content']
+
+
+                    let temp_html = `<div class="col">
+                                        <div class="card h-100">
+                                            <img src="${url}">
+                                            <div class="profile-body">
+                                                <h5 class="card-title">${name}</h5>
+                                                <p class="card-text">${mbti}</p>
+                                                <p class="mycomment">${major}</p>
+                                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#checkModal${num}" data-bs-whatever="@mdo">알아보자</button>
+                                                <div class="modal fade" id="checkModal${num}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5" id="exampleModalLabel">${name}에 대해 알아보자!</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <img src="${url}">
+                                                                    <p>${content}</p>
+                                                                </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`
+
+                    $('#cards-box').append(temp_html)
+
+                })
+
+            })
+        }
+
+
+
+
+
+
+
+        function save_comment() {
+            if ($('#password').val().trim() == '') {
+                alert('비밀번호는 필수 입력입니다.');
+                $('#password').val('');
+                $('#password').focus();
+                return false;
+            }
+            let name = $('#name').val()
+
+            let comment = $('#comment').val()
+            let password = $('#password').val()
+
+            let formData = new FormData();
+            formData.append("name_give", name);
+            formData.append("comment_give", comment);
+            formData.append("password_give", password);
+
+            fetch('/comment/save', { method: "POST", body: formData, }).then((res) => res.json()).then((data) => {
+                //console.log(data)
+                alert(data["msg"]);
+                window.location.reload()
+            });
+
+        }
+
+        function delete_comment() {
+            let id = event.currentTarget.value
+            let delete_password = $('#delete_password'+id).val()
+
+            
+
+            let formData = new FormData();
+            formData.append("id_give", id);
+            formData.append("password_give", delete_password);
+
+            fetch('/comment/delete', { method: "POST", body: formData, }).then((res) => res.json()).then((data) => {
+                //console.log(data)
+                alert(data["msg"]);
+                window.location.reload()
+            });
+        }
+
+        function edit_comment() {
+            let id = event.currentTarget.value
+            let input_password = $('#input_password'+id).val()
+            let input_comment = $('#message-text'+id).val()
+
+
+            let formData = new FormData();
+            formData.append("id_give", id);
+            formData.append("password_give", input_password);
+            formData.append("comment_give", input_comment);
+
+            fetch('/comment/edit', { method: "POST", body: formData, }).then((res) => res.json()).then((data) => {
+                //console.log(data)
+                alert(data["msg"]);
+                window.location.reload()
+            });
+        }
+
+        function show_comment() {
+            fetch('/comment/get').then((res) => res.json()).then((data) => {
+                let rows = JSON.parse(data['result'])
+
+
+
+                $('#comment-list').empty()
+                rows.forEach((a) => {
+                    let name = a['name']
+                    let comment = a['comment']
+                    let delete_id = a['_id']['$oid']
+
+                    console.log(delete_id)
+                    
+                    let count = 0
+                    let num = count + 1
+
+
+                    let temp_html = `<div class="card">
+                                    <div class="card-body">
+                                        <blockquote class="blockquote mb-0">
+                                            <p>${comment}</p>
+                                            <footer class="blockquote-footer">${name}</footer>
+                                        </blockquote>
+                                        <div>
+                                            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editModal${delete_id}" data-bs-whatever="@mdo">수정</button>
+                                            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal${delete_id}" data-bs-whatever="@mdo">삭제</button>
+                                        </div>
+
+                                        <div class="modal fade" id="editModal${delete_id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">수정하기</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form>
+                                                        <div class="mb-3">
+                                                            <label for="message-text" class="col-form-label">방명록:</label>
+                                                            <textarea class="form-control" id="message-text${delete_id}"></textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="input_password" class="col-form-label">비밀번호:</label>
+                                                            <input type="text" class="form-control" id="input_password${delete_id}">
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                        <button onclick="edit_comment()" type="button" class="btn btn-dark" value="${delete_id}">수정</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="modal fade" id="exampleModal${delete_id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">삭제하기</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form>
+                                                        <div class="mb-3">
+                                                            <label for="delete_password" class="col-form-label">비밀번호:</label>
+                                                            <input type="text" class="form-control" id="delete_password${delete_id}">
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                        <button onclick="delete_comment()" type="button" class="btn btn-dark" value="${delete_id}">삭제</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`
+
+                    $('#comment-list').append(temp_html)
+                })
+
+            })
+        }
+
+
+
+    </script>
+</head>
+
+<body>
+    <div class="d-flex flex-row-reverse fs-3">
+        <p>현재기온: <span id="temp">36</span>도</p>
+    </div>
+    
+    <div class="profile">
+        <div class="typing_text"></div>
+        <!-- <br>
+        <img src="https://via.placeholder.com/500" alt=""> -->
+    </div>
+
+    <div class="profiles">
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
+            
+            
+        </div>
+    </div>
+    <!-- <div>
+        <h1>MBTI</h1>
+    </div> -->
+
+    <div class="mycards" id="comment-list">
+
+
+    </div>
+
+    <div class="mypost">
+        <div class="d-flex">
+            <div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="name" placeholder="url" />
+                    <label for="floatingInput">닉네임</label>
+        
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="password" placeholder="password"
+                        onchange="noSpaceForm(this);" />
+                    <label for="floatingInput">비밀번호</label>
+        
+                </div>
+            </div>
+            <div class="form-floating w-100">
+                <textarea class="form-control" placeholder="Leave a comment here" id="comment"
+                    style="height: 135px"></textarea>
+                <label for="floatingTextarea2">방명록</label>
+            </div>
+            <button onclick="save_comment()" type="button" class="btn btn-dark">
+                방명록 남기기
+            </button>
+        </div>
+        
+    </div>
+
+</body>
+
+<script>
+    var typeText = document.querySelector(".typing_text")
+    var textToBeTyped = "안녕하세요. 7조 입니다. \n 잘부탁드립니다."
+    var index = 0, isAdding = true
+
+    function playAnim() {
+        setTimeout(function () {
+            // set the text of typeText to a substring of
+            // the textToBeTyped using index.
+            typeText.innerText = textToBeTyped.slice(0, index)
+            if (isAdding) {
+                // adding text
+                if (index > textToBeTyped.length) {
+                    // no more text to add
+                    isAdding = false
+                    //break: wait 2s before playing again
+                    setTimeout(function () {
+                        playAnim()
+                    }, 2000)
+                    return
+                } else {
+                    // increment index by 1
+                    index++
+                }
+            } else {
+                // removing text
+                if (index === 0) {
+                    // no more text to remove
+                    isAdding = true
+                } else {
+                    // decrement index by 1
+                    index--
+                }
+            }
+            // call itself
+            playAnim()
+        }, 120)
+    }
+    // 타이핑 스크립트 호출
+    playAnim()
+</script>
+
+
+</html>
